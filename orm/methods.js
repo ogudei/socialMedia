@@ -31,9 +31,16 @@ async function createBySchema(schema, element) {
   } else return;
 }
 
+function getSchema(schema) {
+  if (Object.keys(schemas).includes(schema)) {
+    return schemas[schema];
+  } else return null;
+}
+
 module.exports = {
   findOneBySchema,
   findOneAndUpdateBySchema,
   createBySchema,
   findBySchema,
+  getSchema,
 };

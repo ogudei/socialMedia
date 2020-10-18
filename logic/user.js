@@ -2,14 +2,14 @@ const NotificationType = require("../constants/notificationType");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const orm = require("../orm/methods");
-
+const followingOperations = require("../models/followingOperations");
 const tokenCreator = require("hiz").objectId;
 
 async function signIn(userReq) {
   let isAuthenticated = false;
   let user = await orm.findOneBySchema("userSchema", "email", userReq.email);
   if (!user) {
-    return NotificationType.WARNING;
+    return NotificationType.INFO;
   } else {
     isAuthenticated = await bcrypt
       .compare(userReq.password, user.password)
@@ -27,7 +27,7 @@ async function signIn(userReq) {
       );
       if (updateResult) {
         return NotificationType.SUCCESS;
-      } else NotificationType.WARNING;
+      } else NotificationType.ERROR;
     } else {
       return NotificationType.WARNING;
     }
@@ -56,7 +56,7 @@ async function signUp(userReq) {
     let result = await orm.createBySchema("userSchema", userReq);
     if (result._doc) {
       return NotificationType.SUCCESS;
-    } else return NotificationType.WARNING;
+    } else return NotificationType.ERROR;
   }
 }
 
@@ -71,9 +71,32 @@ function switchUserActivity(id, isActive) {
   );
 }
 
+async function follow(userId, followedUserId) {
+  let followResult = await followingOperations.follow(userId, followedUserId);
+  if (followResult) {
+    return NotificationType.SUCCESS;
+  } else if (followResult === false) {
+    return NotificationType.INFO;
+  } else return NotificationType.WARNING;
+}
+
+async function unfollow(userId, unfollowedUserId) {
+  let unFollowResult = await followingOperations.unfollow(
+    userId,
+    unfollowedUserId
+  );
+  if (unFollowResult) {
+    return NotificationType.SUCCESS;
+  } else if (unFollowResult === false) {
+    return NotificationType.INFO;
+  } else return NotificationType.WARNING;
+}
+
 module.exports = {
   findUserById,
   switchUserActivity,
   signIn,
   signUp,
+  follow,
+  unfollow,
 };

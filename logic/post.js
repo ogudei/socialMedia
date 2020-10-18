@@ -8,7 +8,7 @@ async function createPost(post) {
   let result = await orm.createBySchema("postSchema", post);
   if (result) {
     return NotificationType.SUCCESS;
-  } else return NotificationType.WARNING;
+  } else return NotificationType.ERROR;
 }
 async function switchPostActivity(id, isActive) {
   return await orm.findOneAndUpdateBySchema(
@@ -17,8 +17,16 @@ async function switchPostActivity(id, isActive) {
     { isActive: isActive }
   );
 }
+async function switchPostStatus(id, status) {
+  return await orm.findOneAndUpdateBySchema(
+    "postSchema",
+    { _id: id },
+    { status: status }
+  );
+}
 module.exports = {
   searchPostByTitle,
   createPost,
   switchPostActivity,
+  switchPostStatus,
 };
