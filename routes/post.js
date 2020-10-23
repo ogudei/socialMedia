@@ -96,15 +96,55 @@ postRouter.get(
       "Postlar getirilirken hata ile karşılaşıldı"
     );
     status = 200;
-    response = responseCreator(
-      posts.result,
-      notification,
-      posts.value
-    );
+    response = responseCreator(posts.result, notification, posts.value);
 
     res.status(status).send(response);
     // }
   }
+);
+
+postRouter.post(
+  "/poststatuschanged",
+  [userAuthLayer],
+  // postRules.create(),
+  // validate,
+  async (req, res) => {
+    let response = null;
+    let errorResponse = null;
+    let status = null;
+    let notification = null;
+    // if (req.validationErrors.length > 0) {
+    //   errorResponse = validationResponse(req.validationErrors);
+    //   response = responseCreator(
+    //     NotificationType.ERROR,
+    //     notificationCreator(
+    //       undefined,
+    //       undefined,
+    //       undefined,
+    //       errorResponse.errorMessage
+    //     ),
+    //     errorResponse.errorData
+    //   );
+
+    //   status = 443;
+    // } else {
+
+    let switched = await postLogic.switchPostStatus(
+      req.body.tweetId,
+      req.body.status
+    );
+    notification = notificationCreator(
+      "Post durumu başarı ile oluşturuldu.",
+      "Post durumu değiştirilemedi",
+      undefined,
+      "Post durumu değiştirilirken hata ile karşılaşıldı"
+    );
+    status = 200;
+    response = responseCreator(switched.result, notification, switched.value);
+
+    res.status(status).send(response);
+  }
+  // }
 );
 
 module.exports = postRouter;

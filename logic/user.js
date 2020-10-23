@@ -133,14 +133,14 @@ async function following(userId) {
     let followingArray = await orm.findFieldBySchema("userSchema", "_id", {
       $in: result.following,
     });
-    let users=[]
+    let users = [];
     followingArray.forEach((element) => {
       users.push({
         username: element._doc.username,
         _id: element._doc._id,
       });
     });
-    return await followingArray;
+    return users;
   } else {
     return [];
   }
@@ -157,14 +157,14 @@ async function followers(userId) {
     let followersArray = await orm.findFieldBySchema("userSchema", "_id", {
       $in: result.followers,
     });
-    let users=[]
+    let users = [];
     followersArray.forEach((element) => {
       users.push({
         username: element._doc.username,
         _id: element._doc._id,
       });
     });
-    return await users;
+    return users;
   } else {
     return [];
   }
@@ -202,13 +202,13 @@ async function me(userId) {
     let ownPosts = await postOperations.ownPosts(userId, "public");
     let followersArray = await followers(userId);
     let followingArray = await following(userId);
+    me._doc.followers = followersArray;
+    me._doc.following = followingArray;
+
     return {
       value: {
-        profile: {
-          information: me._doc,
-          followers: followersArray,
-          following: followingArray,
-        },
+        profile: me._doc,
+
         posts: ownPosts,
       },
       result: NotificationType.SUCCESS,
