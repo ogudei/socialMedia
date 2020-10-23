@@ -10,6 +10,10 @@ const post = new Schema({
     type: ObjectId,
     ref: users,
   },
+  username: {
+    type: String,
+    ref: users,
+  },
   title: {
     type: String,
     required: [true, "Başlık zorunludur."],

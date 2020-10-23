@@ -1,14 +1,14 @@
 const NotificationType = require("../constants/notificationType");
 
 const notificationCreator = (success, info, warning, err) => {
-  let notificationMessage = {
+  let result = {
     SUCCESS: success,
     INFO: info,
     WARNING: warning,
     ERROR: err,
   };
 
-  return notificationMessage;
+  return result;
 };
 
 const responseCreator = (result, messageParam, value) => {
@@ -27,6 +27,11 @@ const responseCreator = (result, messageParam, value) => {
     message = messageParam.WARNING;
     type = NotificationType.WARNING;
     isValid = -1;
+  }
+  else if (result === NotificationType.ERROR) {
+    message = messageParam.ERROR;
+    type = NotificationType.ERROR;
+    isValid = -2;
   }
   let notification = {
     message: message,

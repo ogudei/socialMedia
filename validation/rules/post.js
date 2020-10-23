@@ -1,9 +1,9 @@
 const { body } = require("express-validator");
 
-const postRules = () => {
+const create = () => {
   return [
     // username must be an email
-    body("title")
+    body("userId")
       .exists()
       .withMessage("title parametresi gönderilmeli")
       .bail()
@@ -25,6 +25,7 @@ const postRules = () => {
   ];
 };
 
+
 module.exports = {
-  postRules,
+  create
 };

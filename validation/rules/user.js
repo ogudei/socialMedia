@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-const userRules = () => {
+const user = () => {
   return [
     // username must be an email
     body("email")
@@ -19,7 +19,7 @@ const userRules = () => {
   ];
 };
 
-const followRules = () => {
+const follow = () => {
   return [
     // username must be an email
     body("userId")
@@ -29,12 +29,7 @@ const followRules = () => {
       .isLength({ min: 24, max: 24 })
       .withMessage("userId parametresi 24 karakter olmalı"),
     // password must be at least 5 chars long
-    body("followedUserId")
-      .exists({ checkNull: true, checkFalsy: true })
-      .withMessage("followedUserId parametresi gönderilmeli")
-      .bail()
-      .isLength({ min: 24, max: 24 })
-      .withMessage("followedUserId parametresi 24 karakter olmalı"),
+    
   ];
 };
 const unfollowRules = () => {
@@ -47,17 +42,12 @@ const unfollowRules = () => {
       .isLength({ min: 24, max: 24 })
       .withMessage("userId parametresi 24 karakter olmalı"),
     // password must be at least 5 chars long
-    body("unfollowedUserId")
-      .exists({ checkNull: true, checkFalsy: true })
-      .withMessage("unfollowedUserId parametresi gönderilmeli")
-      .bail()
-      .isLength({ min: 24, max: 24 })
-      .withMessage("unfollowedUserId parametresi 24 karakter olmalı"),
+
   ];
 };
 
 module.exports = {
-  userRules,
-  followRules,
+  user,
+  follow,
   unfollowRules
 };

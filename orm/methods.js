@@ -12,6 +12,24 @@ async function findBySchema(schema, key, value) {
   } else return;
 }
 
+async function findFieldBySchema(schema, key, value, field) {
+  if (Object.keys(schemas).includes(schema)) {
+    return await schemas[schema].find({ [key]: value }, field).exec();
+  } else return;
+}
+
+async function findOneFieldBySchema(schema, key, value, field) {
+  if (Object.keys(schemas).includes(schema)) {
+    return await schemas[schema].findOne({ [key]: value }, field).exec();
+  } else return;
+}
+
+async function findByJSON(schema, jsonQuery) {
+  if (Object.keys(schemas).includes(schema)) {
+    return await schemas[schema].find(jsonQuery).exec();
+  } else return;
+}
+
 async function findOneAndUpdateBySchema(schema, filter, update) {
   if (Object.keys(schemas).includes(schema)) {
     return await schemas[schema].findOneAndUpdate(filter, update).exec();
@@ -43,4 +61,7 @@ module.exports = {
   createBySchema,
   findBySchema,
   getSchema,
+  findByJSON,
+  findFieldBySchema,
+  findOneFieldBySchema,
 };

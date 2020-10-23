@@ -1,6 +1,6 @@
 const express = require("express");
-const { userAuthLayer } = require("../auth/userAuth");
-const postRules = require("../validation/rules/post").postRules;
+const { userAuthLayer } = require("../middleware/auth/userAuth");
+const postRules = require("../validation/rules/post");
 const validate = require("../validation/validate").validate;
 const validationResponse = require("../validation/validationResponse")
   .validationResponse;
@@ -16,38 +16,94 @@ const postRouter = express.Router();
 postRouter.post(
   "/createpost",
   [userAuthLayer],
-  postRules(),
-  validate,
-  (req, res) => {
+  // postRules.create(),
+  // validate,
+  async (req, res) => {
     let response = null;
     let errorResponse = null;
     let status = null;
     let notification = null;
-    if (req.validationErrors.length > 0) {
-      errorResponse = validationResponse(req.validationErrors);
-      response = responseCreator(
-        NotificationType.ERROR,
-        notificationCreator(undefined, undefined, undefined, errorResponse.errorMessage),
-        errorResponse.errorData
+    // if (req.validationErrors.length > 0) {
+    //   errorResponse = validationResponse(req.validationErrors);
+    //   response = responseCreator(
+    //     NotificationType.ERROR,
+    //     notificationCreator(
+    //       undefined,
+    //       undefined,
+    //       undefined,
+    //       errorResponse.errorMessage
+    //     ),
+    //     errorResponse.errorData
+    //   );
+
+    //   status = 443;
+    // } else {
+    let post = new PostModel(
+      req.id,
+      req.user.username,
+      req.body.title,
+      req.body.post,
+      "public",
+      true
+    );
+    let result = await postLogic.createPost(post);
+    if (result == NotificationType.SUCCESS) {
+      notification = notificationCreator(
+        "Post başarı ile oluşturuldu.",
+        undefined,
+        undefined,
+        "post oluşturulurken hata ile karşılaşıldı"
       );
-
-      status = 443;
-    } else {
-      let post = new PostModel(null, req.body.title, req.body.post);
-      let result = postLogic.createPost(post);
-      if (result == NotificationType.SUCCESS) {
-        notification = notificationCreator(
-          "Post başarı ile oluşturuldu.",
-          undefined,
-          undefined,
-          "post oluşturulurken hata ile karşılaşıldı"
-        );
-        status = 200;
-        response = responseCreator(result, notification, notification.message);
-      }
-
-      res.status(status).send(response);
+      status = 200;
+      response = responseCreator(result, notification, notification.message);
     }
+
+    res.status(status).send(response);
+  }
+  // }
+);
+
+postRouter.get(
+  "/posts",
+  [userAuthLayer],
+  //  validate,
+  async (req, res) => {
+    let response = null;
+    let errorResponse = null;
+    let status = null;
+    let notification = null;
+    // if (req.validationErrors.length > 0) {
+    //   errorResponse = validationResponse(req.validationErrors);
+    //   response = responseCreator(
+    //     NotificationType.ERROR,
+    //     notificationCreator(
+    //       undefined,
+    //       undefined,
+    //       undefined,
+    //       errorResponse.errorMessage
+    //     ),
+    //     errorResponse.errorData
+    //   );
+
+    //   status = 443;
+    // } else {
+    let posts = await postLogic.getPostsByUser(req.id, "public");
+
+    notification = notificationCreator(
+      "Postlar başarı ile getirildi.",
+      "Post mevcut değil",
+      undefined,
+      "Postlar getirilirken hata ile karşılaşıldı"
+    );
+    status = 200;
+    response = responseCreator(
+      posts.result,
+      notification,
+      posts.value
+    );
+
+    res.status(status).send(response);
+    // }
   }
 );
 

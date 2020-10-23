@@ -37,7 +37,7 @@ async function follow(userId, followedUserId) {
 }
 
 async function unfollow(userId, unFollowedUserId) {
-  if (userId === followedUserId) {
+  if (userId === Types.ObjectId(unFollowedUserId)) {
     return false;
   } else {
     //Kullanıcının olup olmadığı kontrol edilecek

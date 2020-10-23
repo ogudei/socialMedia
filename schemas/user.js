@@ -21,8 +21,14 @@ const user = new Schema({
   token: {
     type: String,
   },
-  following: Array,
-  followers: Array,
+  following: {
+    type: Array,
+    default: [],
+  },
+  followers: {
+    type: Array,
+    default: [],
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
